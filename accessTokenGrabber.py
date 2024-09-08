@@ -3,9 +3,9 @@ import requests
 import tkinter as tk
 
 from pprint import pprint
+from grabAccessToken import grab_access_token
 
-SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
-SPOTIFY_ACCESS_TOKEN = 'BQC1EEtrc6i8LYIUUI1h-KK1EEdgn6xy8eO-KZxp15YpuDGRn-G2NovyiYvZNRupcrmnL1CZmBcPfiKBSILpyUhXTJgRp25bRrBUhHcusB8nZ1WtkHO7ecgXONVkmhuOlReLZQFYd-KuCZjBdIgoSyy0mQcrpbAmvKbUp8FCUHgJo8ZLOmaYS3V0FpE1fmSCoBwhCr8Dgfiz_M_Onx70QxAE91raLbH_miVB6HF5EAxCedxnYSwEyg5qZkgg8DlwK9dPO6ijtuWmnQh_F604Ei-U2Lh5lxj23VTgGq8-GU2dfg3BHoAw_QMAY-mbG4XPM44kSbBnpCh5w6JIj9W9O4xO_MKP'
+SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player/currently-playing'
 
 def get_current_track(access_token):
     response = requests.get(
@@ -14,7 +14,19 @@ def get_current_track(access_token):
             "Authorization": f"Bearer {access_token}"
         }
     )
+
+    # Check if there was a response
+    if response.status_code != 200:
+         print(f"Error: {response.status_code}, {response.text}")
+         return None
+    
     resp_json = response.json()
+
+
+    if 'item' not in resp_json:
+         print("No current track found")
+         pprint(resp_json)
+         return None
 
     track_ID = resp_json['item']['id']
     track_name = resp_json['item']['name']
@@ -59,15 +71,21 @@ def gui(current_track_info):
         root.mainloop()
 
 def main():
-    while True:
-        current_track_info = get_current_track(
-            SPOTIFY_ACCESS_TOKEN
-        )
+    access_token = grab_access_token()
+    
+    if access_token:
+        while True:
+            current_track_info = get_current_track(access_token)
 
-        pprint(current_track_info, indent = 4)
-        gui(current_track_info)
-
-        time.sleep(3)
+            if current_track_info:
+                pprint(current_track_info, indent=4)
+                gui(current_track_info)
+            else:
+                print("No track information available.")
+        
+            time.sleep(3)
+    else:
+         print("Token aquire failed")
 
 if __name__ == '__main__':
     main()
