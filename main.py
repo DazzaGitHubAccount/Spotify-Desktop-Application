@@ -1,5 +1,5 @@
 from grabAccessToken import grab_access_token
-from GuiHandler import gui
+from guiHandler import gui
 
 
 def main():
