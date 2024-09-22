@@ -5,6 +5,22 @@ from grabCurrentTrack import get_current_track
 
 from skipSong import skipSong
 
+def display_animated_gif(root, gif_holder, gif_path, frame_count):
+    #Rendering the gif Reference: https://stackoverflow.com/questions/28518072/play-animations-in-gif-with-tkinter
+    frames = [tk.PhotoImage(file=gif_path, format='gif -index %i' % i) for i in range(frame_count)]
+
+    def update(ind):
+        frame = frames[ind]
+        gif_holder.configure(image=frame)
+        ind += 1
+        if ind >= frame_count:
+            ind = 0
+            #When the gif finishes, loop it 
+            root.after(10, update, ind)  
+        else:
+            root.after(50, update, ind)
+    update(0) 
+
 def gui_labels_update(root, track_label, artist_label, current_track_info):
 
     #Configure the track label to the current track's name and artist
@@ -35,6 +51,15 @@ def gui(access_token):
     #Remove the top area of the gui
     #root.overrideredirect(True)
     root.attributes('-topmost', True)
+
+    #Gif holder
+    gif_holder = tk.Label(root)
+    gif_holder.pack(side=tk.LEFT)
+
+    #Gif on the left side
+    gif_path = "vibin.gif" 
+    frame_count = 151
+    display_animated_gif(root, gif_holder, gif_path, frame_count)
 
     #Track name
     track_label = tk.Label(root, text="Track: ...", )
