@@ -3,6 +3,8 @@ import tkinter as tk
 from pprint import pprint
 from grabCurrentTrack import get_current_track
 
+from skipSong import skipSong
+
 def gui_labels_update(root, track_label, artist_label, current_track_info):
 
     #Configure the track label to the current track's name and artist
@@ -31,7 +33,7 @@ def gui(access_token):
     #Create the ui
     root = tk.Tk()
     #Remove the top area of the gui
-    root.overrideredirect(True)
+    #root.overrideredirect(True)
     root.attributes('-topmost', True)
 
     #Track name
@@ -42,12 +44,16 @@ def gui(access_token):
     artist_label = tk.Label(root, text="Artists: ...",)
     artist_label.pack(pady=10)
 
-    #screen size
+    #Skip song button
+    button = tk.Button(root, text="Skip Song", command=lambda: skipSong(access_token))
+    button.pack(pady=10)
+
+    #Screen size
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight() 
 
     window_width = 500  
-    window_height = 100
+    window_height = 200
 
     #Position  
     x_position = screen_width - window_width
