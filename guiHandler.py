@@ -34,7 +34,10 @@ def gui_labels_update(root, track_label, artist_label, current_track_info):
     root.update()
 
 def gui_update_info(root, track_label, artist_label, access_token):
+    global track_update_indicator
 
+    if track_update_indicator:
+        root.after_cancel(track_update_indicator)
 
     #Use a thread to get the info!
     def get_track_info():
@@ -49,7 +52,7 @@ def gui_update_info(root, track_label, artist_label, access_token):
     threading.Thread(target=get_track_info).start()
 
     #Refresh this every 3 seconds to ensure the song is updated!
-    root.after(3000, gui_update_info, root, track_label, artist_label, access_token)
+    track_update_indicator = root.after(3000, gui_update_info, root, track_label, artist_label, access_token)
 
 def skip_button_pressed(root, track_label, artist_label, access_token):
 
