@@ -1,9 +1,13 @@
 import tkinter as tk
+import threading
 
 from pprint import pprint
 from grabCurrentTrack import get_current_track
 
 from skipSong import skipSong
+
+#Check if the track is already updating
+track_update_indicator = False
 
 def display_animated_gif(root, gif_holder, gif_path, frame_count):
     #Rendering the gif Reference: https://stackoverflow.com/questions/28518072/play-animations-in-gif-with-tkinter
@@ -30,19 +34,30 @@ def gui_labels_update(root, track_label, artist_label, current_track_info):
     root.update()
 
 def gui_update_info(root, track_label, artist_label, access_token):
-    
-    #Get the current track info
-    current_track_info = get_current_track(access_token)
 
-    #If sucessfull, update the terminal with the info and run the update
-    if current_track_info:
-        pprint(current_track_info, indent=4)
-        gui_labels_update(root, track_label, artist_label, current_track_info)
-    else:
-        print("No track information available")
+
+    #Use a thread to get the info!
+    def get_track_info():
+        current_track_info = get_current_track(access_token)
+        if current_track_info:
+            pprint(current_track_info, indent=4)
+            root.after(0, gui_labels_update, root, track_label, artist_label, current_track_info)
+        else:
+            print("No track information available")
+
+    #Start the thread
+    threading.Thread(target=get_track_info).start()
 
     #Refresh this every 3 seconds to ensure the song is updated!
     root.after(3000, gui_update_info, root, track_label, artist_label, access_token)
+
+def skip_button_pressed(root, track_label, artist_label, access_token):
+
+    def skip_update():
+        skipSong(access_token)
+        gui_update_info(root, track_label, artist_label, access_token)
+        
+    threading.Thread(target=skip_update).start()
 
 def gui(access_token):
         
@@ -69,8 +84,8 @@ def gui(access_token):
     artist_label = tk.Label(root, text="Artists: ...",)
     artist_label.pack(pady=10)
 
-    #Skip song button
-    button = tk.Button(root, text="Skip Song", command=lambda: skipSong(access_token))
+    #Skip song button + update track info
+    button = tk.Button(root, text="Skip Song", command=lambda: skip_button_pressed(root, track_label, artist_label, access_token))
     button.pack(pady=10)
 
     #Screen size
