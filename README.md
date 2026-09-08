@@ -164,6 +164,3 @@ These permissions allow the application to:
 This project is a personal learning project and is not affiliated with or endorsed by Spotify.
 
 Spotify and its associated trademarks belong to Spotify AB.
-
-```
-```
