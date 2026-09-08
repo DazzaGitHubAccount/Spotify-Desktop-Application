@@ -17,17 +17,17 @@ The application uses the Spotify Web API through **Spotipy**, with a **Tkinter**
 
   * Skip the currently playing song using Spotify's playback API.
 
-* 🔐 **Spotify OAuth Authentication**
+* **Spotify OAuth Authentication**
 
   * Authenticates with Spotify using Spotipy's OAuth implementation.
   * Uses environment variables for Spotify application credentials.
 
-* 🔄 **Automatic Track Updates**
+* **Automatic Track Updates**
 
   * Periodically checks Spotify for the currently playing track.
   * Updates the desktop interface when the track changes.
 
-* 🖥️ **Desktop GUI**
+* **Desktop GUI**
 
   * Built using Python's Tkinter library.
   * Displays track information and playback controls in a compact window.
